@@ -1,0 +1,26 @@
+{
+  "name": "tw-holiday-checker",
+  "version": "1.0.0",
+  "description": "檢查台灣假日 check tw holiday",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aiko3310/tw-holiday.git"
+  },
+  "keywords": [
+    "tw",
+    "holiday"
+  ],
+  "author": "tsai4n",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aiko3310/tw-holiday/issues"
+  },
+  "homepage": "https://github.com/aiko3310/tw-holiday#readme",
+  "dependencies": {
+    "node-fetch": "2"
+  }
+}
