@@ -1,36 +1,51 @@
-const fetch = require("node-fetch");
+import fetch from 'node-fetch';
 
+// API 回應的假日資料介面
+interface HolidayResponse {
+  date: string;
+  year: string;
+  name: string | null;
+  isholiday: string;
+  holidaycategory: string|null;
+  description: string|null;
+}
+
+// 處理後的假日資料介面
+interface ProcessedHoliday extends HolidayResponse {
+  month: string;
+  date: string;
+  allDate: string;
+}
 
 /**
  * 獲取假日資料，可選擇指定年份
  * @param {number|null} year 西元年份，不指定則獲取所有年份
- * @returns {Promise<Array>} 假日資料陣列
+ * @returns {Promise<ProcessedHoliday[]>} 假日資料陣列
  */
-async function getHolidays(year = null) {
+async function getHolidays(year: number | null = null): Promise<ProcessedHoliday[]> {
   if (year !== null && (typeof year !== 'number' || year < 2016)) {
     throw new Error('資料最早只有到 2016 年');
   }
   
   try {
-    let allHolidays = [];
+    let allHolidays: HolidayResponse[] = [];
     let page = 0;
     let hasMoreData = true;
     let earlyExit = false;
     
     while (hasMoreData) {
       const apiUrl = `https://data.ntpc.gov.tw/api/datasets/308DCD75-6434-45BC-A95F-584DA4FED251/json?page=${page}&size=1000`;
-      const response = await fetch(apiUrl);
+      const response = await fetch(apiUrl,{});
       
       if (!response.ok) {
         throw new Error(`API 請求失敗: ${response.status} ${response.statusText}`);
       }
       
-      const data = await response.json();
+      const data: HolidayResponse[] = await response.json();
       
       if (data.length === 0) {
         hasMoreData = false;
       } else {
-        // 如果指定了年份，只保留該年份的資料
         const filteredData = year !== null
           ? data.filter(holiday => Number(holiday.year) === year)
           : data;
@@ -38,7 +53,6 @@ async function getHolidays(year = null) {
         allHolidays = [...allHolidays, ...filteredData];
         page++;
         
-        // 指定年份的優化：如果發現後面的資料年份已經超過了，就提前結束
         if (year !== null && filteredData.length === 0 && 
             data.some(h => Number(h.year) > year)) {
           hasMoreData = false;
@@ -46,12 +60,11 @@ async function getHolidays(year = null) {
         }
       }
     }
- 
     
     return allHolidays.map(h => ({
       ...h,
-      month:h.date.substring(4, 6),
-      date:h.date.substring(6, 8),
+      month: h.date.substring(4, 6),
+      date: h.date.substring(6, 8),
       allDate: h.date
     }));
   } catch (error) {
@@ -66,9 +79,9 @@ async function getHolidays(year = null) {
 /**
  * 獲取假日資料，排除週六日，可選擇指定年份
  * @param {number|null} year 西元年份，不指定則獲取所有年份
- * @returns {Promise<Array>} 排除週六日後的假日資料陣列
+ * @returns {Promise<ProcessedHoliday[]>} 排除週六日後的假日資料陣列
  */
-async function getHolidaysExcludeWeekends(year = null) {
+async function getHolidaysExcludeWeekends(year: number | null = null): Promise<ProcessedHoliday[]> {
   try {
     const holidays = await getHolidays(year);
     
@@ -85,7 +98,9 @@ async function getHolidaysExcludeWeekends(year = null) {
   }
 }
 
-module.exports = {
+export {
   getHolidays,
   getHolidaysExcludeWeekends,
-};
+  HolidayResponse,
+  ProcessedHoliday
+}; 

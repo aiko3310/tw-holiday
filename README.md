@@ -7,23 +7,34 @@
 
 ### getHolidays
 
-會回傳所有有放假日期的 Promise
+會回傳所有有放假日期的 Promise  
+
 `
 await getHolidays()
-`
+`  
+
 可傳入西元年份，最早資料至 2016年
+
 `
 await getHolidays(2025)
 `
 
 ### getHolidaysExcludeWeekends
 
-會排除週六日的特殊放假
+會排除週六日的特殊放假  
+
 `
 await getHolidaysExcludeWeekends()
 `
 
 可傳入西元年份，最早資料至 2016年
+
 `
 await getHolidaysExcludeWeekends(2025)
 `
+
+| 版本 | 日期 | 更新內容 |
+|------|------|----------|
+| 2.0.0 | 2024-02-24 | - 轉換為 TypeScript<br>- 新增型別定義<br>- 支援 TypeScript 專案使用 |
+| 1.1.0 | 2024-02-24 | 更新 api 串接 |
+
